@@ -20,9 +20,12 @@ classNames = ["person", "bicycle", "car", "motorbike", "aeroplane", "bus", "trai
               "teddy bear", "hair drier", "toothbrush"
               ]
 
+mask = cv.imread("detection_area (Custom).png")
+
 while True:
     success, img = cap.read()
-    results = model(img, stream=True)
+    imgRegion = cv.bitwise_and(img, mask)
+    results = model(imgRegion, stream=True)
     for r in results:  # looping through images
         boxes = r.boxes
         for box in boxes:  # Looping through bounding boxes in the image 'r'
@@ -57,5 +60,6 @@ while True:
                 cvzone.cornerRect(img, (x1, y1, x2 - x1, y2 - y1), l=10, t=2)  # Drawing the bounding box
 
     cv.imshow("Image", img)
+    # cv.imshow("ImageRegion", imgRegion)
     cv2.waitKey(1)
 
