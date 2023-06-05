@@ -37,7 +37,7 @@ while True:
             x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
             bbox = x1, y1, x2, y2
             print(x1, y1, x2-x1, y2-y1)
-            cvzone.cornerRect(img, (x1, y1, x2-x1, y2-y1), l=10, t=3)
+            # cvzone.cornerRect(img, (x1, y1, x2 - x1, y2 - y1), l=10, t=2)
 
             # Displaying the object class and confidence value using CVZONE
             conf = math.ceil(box.conf*100)/100
@@ -45,7 +45,16 @@ while True:
             class_index = box.cls
             objectClass = classNames[int(class_index[0])]
             print(f"Class Name = {objectClass}")
-            cvzone.putTextRect(img, f'{objectClass} {conf}', (max(0, x1), max(35, y1)), scale=1, thickness=1)
+
+            # Selecting which object to detect
+            if objectClass == 'car' or objectClass == 'bus' or objectClass == 'motorbike' or objectClass == 'truck'\
+                and conf > 0.3:
+                cvzone.putTextRect(img,
+                                   f'{objectClass} {conf}',
+                                   (max(0, x1), max(35, y1)),
+                                   scale=1, thickness=1,
+                                   offset=3)   # This line prints the label with its confidence on the corner rectangle
+                cvzone.cornerRect(img, (x1, y1, x2 - x1, y2 - y1), l=10, t=2)  # Drawing the bounding box
 
     cv.imshow("Image", img)
     cv2.waitKey(1)
