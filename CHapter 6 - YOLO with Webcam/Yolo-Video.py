@@ -4,7 +4,7 @@ import cv2 as cv
 import cvzone
 import math
 
-cap = cv.VideoCapture("../videos/bikes.mp4")  # Selecting the video input method in this case a video from our hard drive
+cap = cv.VideoCapture("../videos/bikes.mp4") # Selecting the video input method in this case a video from our hard drive
 
 model = yolo("../Yolo-Weights/yolov8n.pt")
 
