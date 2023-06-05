@@ -4,7 +4,7 @@ import cv2 as cv
 import cvzone
 import math
 
-cap = cv.VideoCapture("../videos/cars.mp4") # Selecting the video input method in this case a video from our hard drive
+cap = cv.VideoCapture("../videos/people.mp4") # Selecting the video input method in this case a video from our hard drive
 
 model = yolo("../Yolo-Weights/yolov8n.pt")
 
@@ -49,9 +49,8 @@ while True:
             objectClass = classNames[int(class_index[0])]
             print(f"Class Name = {objectClass}")
 
-            # Selecting which object to detect
-            if objectClass == 'car' or objectClass == 'bus' or objectClass == 'motorbike' or objectClass == 'truck'\
-                and conf > 0.3:
+            # Selecting which object to detect and printing the bounding boxes on them
+            if objectClass == 'person' and conf > 0.3:
                 cvzone.putTextRect(img,
                                    f'{objectClass} {conf}',
                                    (max(0, x1), max(35, y1)),
