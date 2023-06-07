@@ -3,6 +3,7 @@ from ultralytics import YOLO as yolo
 import cv2 as cv
 import cvzone
 import math
+from sort import *
 
 cap = cv.VideoCapture("../videos/people.mp4") # Selecting the video input method in this case a video from our hard drive
 
