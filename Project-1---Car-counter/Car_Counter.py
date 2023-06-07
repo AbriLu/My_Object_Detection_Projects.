@@ -74,6 +74,7 @@ while True:     # This while function loops through all the frames of the input 
         x1, y1, x2, y2, Id = result
         print(result)
 
+
     cv.imshow("Image", img)
     # cv.imshow("ImageRegion", imgRegion)
     cv2.waitKey(0)
