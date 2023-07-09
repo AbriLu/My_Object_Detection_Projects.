@@ -99,17 +99,11 @@ while True:     # This while function loops through all the frames of the input 
 
         # Setting the counting area in the image and counting the number of objects while tracking them
 
-        # print(f"Ids = {resultTracker[:, -1]}")  # Printing all the IDs extracted from a single frame
         if limits[0]< cx < limits[2] and limits[1]-20 < cy < limits[1]+20: # For all the objects in this area, if the
             # center of an object is in this area of the image then count the object
-            detectedIds = resultTracker[:, -1]
-            for ID in resultTracker[:, -1]:
-                if ID in listOfUniqueIds:
-                    continue
-                else:
-                    listOfUniqueIds.append(ID)
-                    numOfObjects += 1
-                    cv.line(img, (limits[0], limits[1]), (limits[2], limits[3]), (0, 255, 0), 5)
+            if Id not in listOfUniqueIds:
+                listOfUniqueIds.append(Id)
+            numOfObjects = len(listOfUniqueIds)
     cvzone.putTextRect(img, f'Count={numOfObjects}', (50, 50))  # Printing the number of objects detected
 
     cv.imshow("Image", img)
