@@ -24,18 +24,24 @@ classNames = ["person", "bicycle", "car", "motorbike", "aeroplane", "bus", "trai
 
 mask = cv.imread("detection_area (Custom).png")
 
+
 # Object tracking setup
 tracker = Sort(max_age=20, min_hits=3, iou_threshold=0.3)
 
+limits = [320, 315, 673, 315]
+
 while True:     # This while function loops through all the frames of the input video and places labeled bounding box around objects of interest
     success, img = cap.read()
+
     imgRegion = cv.bitwise_and(img, mask)  # Combining the mask and the video
-    results = model(imgRegion, stream=True)
+    # print(f"Shapes of images: {img.shape}")
+    results = model(imgRegion, stream=True)   # running the model
 
     detections = np.empty((0, 5))   # Array of detections with attributes x1, y1, x2, y2 and the tracking ID
 
-    for r in results:  # looping through images
-        boxes = r.boxes
+    for r in results:  # looping through each frame
+        boxes = r.boxes                     # the r.boxes is used to extract the boxes from the tensor object 'r'
+        # print(f"Here are boxes from one frame: {boxes}")
         for box in boxes:  # Looping through bounding boxes in the image 'r'
             # Using the CV2 package to draw bounding boxes
             # x1, y1, x2, y2 = box.xyxy[0]
@@ -47,7 +53,8 @@ while True:     # This while function loops through all the frames of the input 
             x1, y1, x2, y2 = box.xyxy[0]  # The index '0' is meant to extract the data from the box.xyxy tensor object
             x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
             bbox = x1, y1, x2, y2
-            print(x1, y1, x2-x1, y2-y1)
+            w, h = x2-x1, y2-y1
+            print(x1, y1, w, h)
             # cvzone.cornerRect(img, (x1, y1, x2 - x1, y2 - y1), l=10, t=2)
 
             # Displaying the object class and confidence value using CVZONE
@@ -60,20 +67,32 @@ while True:     # This while function loops through all the frames of the input 
             # Selecting which object to detect (Object of interest for detection)
             if objectClass == 'car' or objectClass == 'bus' or objectClass == 'motorbike' or objectClass == 'truck'\
                 and conf > 0.3:
-                cvzone.putTextRect(img,
-                                   f'{objectClass} {conf}',
-                                   (max(0, x1), max(35, y1)),
-                                   scale=1, thickness=1,
-                                   offset=3)   # This line prints the label with its confidence on the corner rectangle
-                cvzone.cornerRect(img, (x1, y1, x2 - x1, y2 - y1), l=10, t=2)  # Drawing the bounding box
+                # cvzone.putTextRect(img,
+                #                    f'{objectClass} {conf}',
+                #                    (max(0, x1), max(35, y1)),
+                #                    scale=1, thickness=1,
+                #                    offset=3)  # This line prints the label with its confidence on the corner rectangle
+                # cvzone.cornerRect(img, (x1, y1, x2 - x1, y2 - y1), l=10, t=5)  # Drawing the bounding box
                 currentArray = np.array([x1, y1, x2, y2, conf])
                 detections = numpy.vstack((detections, currentArray))  # Appending arrays of detections with numpy
 
+    # Performing the object tracking
+
+    cv.line(img, (limits[0], limits[1]), (limits[2], limits[3]), (0, 0, 255), 5)
     resultTracker = tracker.update(detections)
     for result in resultTracker:
         x1, y1, x2, y2, Id = result
+        x1, y1, x2, y2, Id = int(x1), int(y1), int(x2), int(y2), int(Id)
+        w, h = x2 - x1, y2 - y1
+        cvzone.cornerRect(img, (x1, y1, w, h), l=10, t=2, colorR=(255, 0, 255))
         print(result)
-
+        cvzone.putTextRect(img,
+                           f'{Id}',
+                           (max(0, x1), max(35, y1)),
+                           scale=1, thickness=1,
+                           offset=3)  # This line prints the detection Id on the bounding boxes
+        cx, cy = int(x1+w/2), int(y1+h/2)
+        cv.circle(img, (cx, cy), 5, (255, 0, 255), cv2.FILLED)
 
     cv.imshow("Image", img)
     # cv.imshow("ImageRegion", imgRegion)
