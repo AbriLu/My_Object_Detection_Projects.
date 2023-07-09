@@ -30,6 +30,9 @@ tracker = Sort(max_age=20, min_hits=3, iou_threshold=0.3)
 
 limits = [320, 315, 673, 315]
 
+numOfObjects = 0
+listOfUniqueIds = []
+
 while True:     # This while function loops through all the frames of the input video and places labeled bounding box around objects of interest
     success, img = cap.read()
 
@@ -39,7 +42,7 @@ while True:     # This while function loops through all the frames of the input 
 
     detections = np.empty((0, 5))   # Array of detections with attributes x1, y1, x2, y2 and the tracking ID
 
-    for r in results:  # looping through each frame
+    for r in results:  # looping through results of a frame
         boxes = r.boxes                     # the r.boxes is used to extract the boxes from the tensor object 'r'
         # print(f"Here are boxes from one frame: {boxes}")
         for box in boxes:  # Looping through bounding boxes in the image 'r'
@@ -93,6 +96,23 @@ while True:     # This while function loops through all the frames of the input 
                            offset=3)  # This line prints the detection Id on the bounding boxes
         cx, cy = int(x1+w/2), int(y1+h/2)
         cv.circle(img, (cx, cy), 5, (255, 0, 255), cv2.FILLED)
+
+        # Setting the counting area in the image and counting the number of objects
+
+        print(f"Ids = {resultTracker[:, -1]}")
+
+        if limits[0]< cx < limits[2] and limits[1]-20 < cy < limits[1]+20: # For all the objects in this area, if the
+            # center of an object is in this area of the image then count the object
+            detectedIds = resultTracker[:, -1]
+            for ID in resultTracker[:, -1]:
+                if ID in listOfUniqueIds:
+                    continue
+                else:
+                    listOfUniqueIds.append(ID)
+                    numOfObjects += 1
+            cvzone.putTextRect(img,
+                               f'Count = {numOfObjects}',
+                               (50, 50))  # This line prints the number of objects detected
 
     cv.imshow("Image", img)
     # cv.imshow("ImageRegion", imgRegion)
