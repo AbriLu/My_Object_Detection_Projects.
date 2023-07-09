@@ -110,8 +110,9 @@ while True:     # This while function loops through all the frames of the input 
                     listOfUniqueIds.append(ID)
                     numOfObjects += 1
                     cv.line(img, (limits[0], limits[1]), (limits[2], limits[3]), (0, 255, 0), 5)
-        cvzone.putTextRect(img, f'Count={numOfObjects}', (50, 50))  # Printing the number of objects detected
+    cvzone.putTextRect(img, f'Count={numOfObjects}', (50, 50))  # Printing the number of objects detected
 
     cv.imshow("Image", img)
     # cv.imshow("ImageRegion", imgRegion)
-    cv2.waitKey(0)
+    cv2.waitKey(1)
+    # cv2.waitKey(0)
